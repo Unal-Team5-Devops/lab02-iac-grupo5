@@ -1,0 +1,56 @@
+name: IaC CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  # Se ejecuta en cada Pull Request: validaciones rápidas antes del merge
+  validar-pr:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: hashicorp/setup-terraform@v3
+
+      - name: Validar Terraform
+        working-directory: terraform
+        run: |
+          terraform fmt -check
+          terraform init -backend=false
+          terraform validate
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validar Pulumi (sintaxis Python)
+        working-directory: pulumi
+        run: python -m py_compile __main__.py
+
+  # Se ejecuta al hacer merge a main: verifica que la infraestructura se puede planificar
+  validar-main:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform plan
+        working-directory: terraform
+        run: |
+          cp terraform.tfvars.example terraform.tfvars
+          terraform init
+          terraform plan
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar dependencias de Pulumi
+        working-directory: pulumi
+        run: pip install -r requirements.txt

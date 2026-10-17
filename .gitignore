@@ -1,0 +1,35 @@
+# --- Terraform ---
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraform.tfstate.lock.info
+*.tfplan
+
+# --- Pulumi / Python ---
+venv/
+.venv/
+env/
+__pycache__/
+*.py[cod]
+.pulumi/
+
+# --- Secretos ---
+.env
+.env.*
+*.pem
+*.key
+secrets/
+
+# --- Sistema / editores ---
+.DS_Store
+.idea/
+.vscode/
+*.swp
