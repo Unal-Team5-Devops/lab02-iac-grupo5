@@ -21,7 +21,7 @@ lab02-iac-grupo5/
 ├── .github/workflows/iac-ci.yml   # Pipeline Shift-Left para validar PRs
 ├── terraform/                     # R1
 ├── pulumi/                        # R2
-└── docs/informe_comparativo.md    # R3 (compartido)
+└── docs/informe_comparativo.md    # R3
 ```
 
 ## Requisitos previos
