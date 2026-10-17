@@ -1,56 +1,56 @@
-name: IaC CI
+name: IaC Shift-Left CI (Terraform & Pulumi Local) - Grupo 5
 
 on:
   pull_request:
-    branches: [main]
+    branches: [ main ]
   push:
-    branches: [main]
+    branches: [ main ]
 
 jobs:
-  # Se ejecuta en cada Pull Request: validaciones rápidas antes del merge
-  validar-pr:
-    if: github.event_name == 'pull_request'
+  validate-terraform:
+    name: Terraform Quality Gate
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: hashicorp/setup-terraform@v3
-
-      - name: Validar Terraform
+    defaults:
+      run:
         working-directory: terraform
-        run: |
-          terraform fmt -check
-          terraform init -backend=false
-          terraform validate
+    steps:
+      - name: Checkout del repositorio
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
+      - name: Instalar Terraform CLI
+        uses: hashicorp/setup-terraform@v3
         with:
-          python-version: "3.12"
+          terraform_version: 1.8.0
 
-      - name: Validar Pulumi (sintaxis Python)
-        working-directory: pulumi
-        run: python -m py_compile __main__.py
+      - name: Verificar Formato Canónico (terraform fmt)
+        run: terraform fmt -check -diff
 
-  # Se ejecuta al hacer merge a main: verifica que la infraestructura se puede planificar
-  validar-main:
-    if: github.event_name == 'push'
+      - name: Inicializar Providers sin Backend Remoto
+        run: terraform init -backend=false
+
+      - name: Validar Sintaxis y Tipos (terraform validate)
+        run: terraform validate
+
+  validate-pulumi:
+    name: Pulumi Quality Gate (Python)
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: hashicorp/setup-terraform@v3
-
-      - name: Terraform plan
-        working-directory: terraform
-        run: |
-          cp terraform.tfvars.example terraform.tfvars
-          terraform init
-          terraform plan
-
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - name: Instalar dependencias de Pulumi
+    defaults:
+      run:
         working-directory: pulumi
-        run: pip install -r requirements.txt
+    steps:
+      - name: Checkout del repositorio
+        uses: actions/checkout@v4
+
+      - name: Instalar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Instalar Linters (Ruff y Flake8)
+        run: pip install ruff flake8
+
+      - name: Análisis Estático con Ruff
+        run: ruff check .
+
+      - name: Detección de Errores de Sintaxis con Flake8
+        run: flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics

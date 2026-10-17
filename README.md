@@ -8,9 +8,9 @@ para compararlas y analizar el *drift* de configuración.
 
 | Nombre | Rol | Responsabilidad principal |
 |--------|-----|---------------------------|
-| _Pendiente_ | R1 | Terraform (`terraform/`) |
-| _Pendiente_ | R2 | Pulumi (`pulumi/`) |
-| _Pendiente_ | R3 | Documentación y CI (`docs/`, `.github/`) |
+| Camilo Alfonso Mosquera Benavides  | R1 | Terraform (`terraform/`) |
+| Jonathan David Moncaleano Angel | R2 | Pulumi (`pulumi/`) |
+| Andrés Felipe Lugo Rodríguez | R3 | Documentación y CI (`docs/`, `.github/`) |
 
 ## Estructura del repositorio
 
