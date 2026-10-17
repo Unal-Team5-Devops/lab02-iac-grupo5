@@ -2,6 +2,7 @@
 Implementacion de Infraestructura Local con Pulumi y Docker en Python
 Costo: $0.00
 """
+
 import pulumi
 import pulumi_docker as docker
 
@@ -14,8 +15,7 @@ nginx_version = config.get("nginxVersion") or "1.27-alpine"
 
 valid_envs = ["dev", "staging", "prod"]
 if environment not in valid_envs:
-    raise ValueError(
-        f"Ambiente '{environment}' invalido. Opciones: {valid_envs}")
+    raise ValueError(f"Ambiente '{environment}' invalido. Opciones: {valid_envs}")
 # Metadatos comunes
 common_labels = [
     docker.NetworkLabelArgs(label="managed-by", value="pulumi"),
@@ -70,5 +70,4 @@ container = docker.Container(
 pulumi.export("container_id", container.id)
 pulumi.export("container_name", container.name)
 pulumi.export("network_name", network.name)
-pulumi.export("service_url", pulumi.Output.concat(
-    "http://127.0.0.1:", str(host_port)))
+pulumi.export("service_url", pulumi.Output.concat("http://127.0.0.1:", str(host_port)))
